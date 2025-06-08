@@ -19,6 +19,8 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
+  const [completedTaskIds, setCompletedTaskIds] = useState([]);
+
 
   const fetchTasks = async () => {
     try {
@@ -47,9 +49,6 @@ const HomeScreen = () => {
   );
 
   const renderTask = ({ item }) => {
-    let badgeColor = "#E3F2FD";
-    if (item.priority === "High") badgeColor = "#FFCDD2";
-    else if (item.priority === "Medium") badgeColor = "#FFF9C4";
 
     // DELETE function
     const handleDelete = () => {
@@ -76,12 +75,16 @@ const HomeScreen = () => {
       );
     };
 
+    const toggleCompleted = (taskId) => {
+      setCompletedTaskIds((prev) =>
+        prev.includes(taskId)
+          ? prev.filter((id) => id !== taskId)
+          : [...prev, taskId]
+      );
+    };
+
     return (
       <View style={styles.taskCard}>
-        <View style={[styles.priorityBadge, { backgroundColor: badgeColor }]}>
-          <Text style={styles.badgeText}>{item.priority}</Text>
-        </View>
-
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>
           {item.description.length > 35
@@ -93,10 +96,33 @@ const HomeScreen = () => {
         <TouchableOpacity
           onPress={() => navigation.navigate("ViewTask", { task: item })}
         >
+          {/* Checkbox */}
+          <View style={styles.checkboxContainer}>
+            <TouchableOpacity
+              onPress={() => toggleCompleted(item.id)}
+              style={styles.checkboxRow}
+            >
+              <Icon
+                name={
+                  completedTaskIds.includes(item.id)
+                    ? "check-box"
+                    : "check-box-outline-blank"
+                }
+                size={22}
+                color={completedTaskIds.includes(item.id) ? "#4CAF50" : "#888"}
+              />
+              <Text style={styles.checkboxLabel}>
+                {completedTaskIds.includes(item.id)
+                  ? "Completed"
+                  : "To be completed"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <Text style={{ color: "#1976D2", marginTop: 8 }}>View Details</Text>
         </TouchableOpacity>
 
-            {/* Edit Icon */}
+        {/* Edit Icon */}
         <View style={styles.iconRow}>
           <TouchableOpacity
             onPress={() => navigation.navigate("EditTask", { task: item })}
@@ -105,7 +131,7 @@ const HomeScreen = () => {
             <Icon name="edit" size={22} color="#1976D2" />
           </TouchableOpacity>
 
-            {/* Delete Icon */}
+          {/* Delete Icon */}
           <TouchableOpacity onPress={handleDelete} style={styles.iconButton}>
             <Icon name="delete" size={22} color="#E53935" />
           </TouchableOpacity>
@@ -179,13 +205,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     color: "#555",
   },
-  priorityBadge: {
-    alignSelf: "flex-start",
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    marginBottom: 8,
-  },
   badgeText: {
     fontSize: 12,
     fontWeight: "bold",
@@ -232,7 +251,21 @@ searchInput: {
   borderColor: "#ddd",
   borderWidth: 1,
 },
+checkboxContainer: {
+  marginTop: 10,
+  marginBottom: 4,
+},
 
+checkboxRow: {
+  flexDirection: "row",
+  alignItems: "center",
+},
+
+checkboxLabel: {
+  marginLeft: 8,
+  fontSize: 14,
+  color: "#444",
+},
 
 });
 
