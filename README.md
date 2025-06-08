@@ -34,6 +34,7 @@ A mobile productivity app built with **React Native + Expo**, designed for manag
 git clone https://github.com/yourusername/plango.git
 cd plango
 
+```
 2. **Install dependencies**
 
 ```bash
