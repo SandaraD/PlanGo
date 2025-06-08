@@ -76,7 +76,11 @@ const HomeScreen = () => {
         </View>
 
         <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>{item.description}</Text>
+        <Text style={styles.description}>
+          {item.description.length > 35
+            ? item.description.substring(0, 35) + "..."
+            : item.description}
+        </Text>
 
         {/* View Task */}
         <TouchableOpacity
@@ -86,7 +90,12 @@ const HomeScreen = () => {
         </TouchableOpacity>
 
         <View style={styles.iconRow}>
-
+          <TouchableOpacity
+            onPress={() => navigation.navigate("EditTask", { task: item })}
+            style={styles.iconButton}
+          >
+            <Icon name="edit" size={22} color="#1976D2" />
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={handleDelete} style={styles.iconButton}>
             <Icon name="delete" size={22} color="#E53935" />
