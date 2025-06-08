@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -17,13 +18,14 @@ const HomeScreen = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const [searchText, setSearchText] = useState('');
 
   const fetchTasks = async () => {
     try {
       const response = await axios.get(
         "https://60a21a08745cd70017576014.mockapi.io/api/v1/todo"
       );
-      // Reverse to show newest first
+      //Newest to oldest
       setTasks(response.data.reverse());
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -32,11 +34,16 @@ const HomeScreen = () => {
     }
   };
 
-  // Refresh on screen focus
   useFocusEffect(
     useCallback(() => {
       fetchTasks();
     }, [])
+  );
+
+  const filteredTasks = tasks.filter(
+    (task) =>
+      task.title.toLowerCase().includes(searchText.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const renderTask = ({ item }) => {
@@ -44,7 +51,7 @@ const HomeScreen = () => {
     if (item.priority === "High") badgeColor = "#FFCDD2";
     else if (item.priority === "Medium") badgeColor = "#FFF9C4";
 
-    // DELETE FUNCTION
+    // DELETE function
     const handleDelete = () => {
       Alert.alert(
         "Confirm Delete",
@@ -89,6 +96,7 @@ const HomeScreen = () => {
           <Text style={{ color: "#1976D2", marginTop: 8 }}>View Details</Text>
         </TouchableOpacity>
 
+            {/* Edit Icon */}
         <View style={styles.iconRow}>
           <TouchableOpacity
             onPress={() => navigation.navigate("EditTask", { task: item })}
@@ -97,6 +105,7 @@ const HomeScreen = () => {
             <Icon name="edit" size={22} color="#1976D2" />
           </TouchableOpacity>
 
+            {/* Delete Icon */}
           <TouchableOpacity onPress={handleDelete} style={styles.iconButton}>
             <Icon name="delete" size={22} color="#E53935" />
           </TouchableOpacity>
@@ -109,11 +118,19 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>My Todo List</Text>
 
+      {/* Search Bar */}
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search tasks..."
+        value={searchText}
+        onChangeText={setSearchText}
+      />
+
       {loading ? (
         <ActivityIndicator size="large" color="#1976D2" />
       ) : (
         <FlatList
-          data={tasks}
+          data={filteredTasks}
           keyExtractor={(item) => item.id}
           renderItem={renderTask}
           contentContainerStyle={{ paddingBottom: 120 }}
@@ -141,7 +158,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    marginTop: 60,
+    marginTop: 20,
     marginBottom: 20,
   },
   taskCard: {
@@ -200,12 +217,22 @@ const styles = StyleSheet.create({
   top: 12,
   right: 12,
   flexDirection: "row",
-  gap: 8, // use `marginLeft` fallback if gap doesn't work
+  gap: 8,
 },
 
 iconButton: {
   padding: 4,
-}
+},
+searchInput: {
+  backgroundColor: "#fff",
+  borderRadius: 8,
+  padding: 12,
+  fontSize: 16,
+  marginBottom: 16,
+  borderColor: "#ddd",
+  borderWidth: 1,
+},
+
 
 });
 
