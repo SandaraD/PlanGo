@@ -7,8 +7,8 @@ const SplashScreen = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace("Home"); // Replace with your main screen name
-    }, 4000); // 2-second splash
+      navigation.replace("Home");
+    }, 4000); // 4 second pause
 
     return () => clearTimeout(timer);
   }, []);
@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     fontSize: 70,
     fontWeight: "bold",
     color: "#fff",
-    // marginBottom: 0,
   },
   tagline: {
     fontSize: 20,
