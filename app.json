@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "MedPlan",
-    "slug": "MedPlan",
+    "name": "PlanGo",
+    "slug": "PlanGo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
